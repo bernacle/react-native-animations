@@ -7,7 +7,6 @@ import Course from "./components/Course";
 import Logo from "./components/Logo";
 import backgroundImage from "./assets/background2.jpg";
 import logo from "./assets/logo-react.png";
-import * as Icon from "@expo/vector-icons";
 import { NotificationIcon } from "./components/Icons";
 import FramerX from "./assets/logo-framerx.png";
 import Figma from "./assets/logo-figma.png";
@@ -15,9 +14,12 @@ import { logos } from "./utils/logos";
 import { cards } from "./utils/cards";
 import { courses } from "./utils/courses";
 
+import Menu from "./components/Menu";
+
 export default function App() {
   return (
     <Container>
+      <Menu />
       <SafeAreaView>
         <ScrollView style={{ height: "100%" }}>
           <TitleBar>
