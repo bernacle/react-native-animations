@@ -3,7 +3,7 @@ import styled from "styled-components";
 
 const Card = props => {
   return (
-    <Container>
+    <Container style={{ elevation: 10 }}>
       <Cover>
         <Image source={props.image} />
         <Title>{props.title}</Title>
@@ -27,8 +27,7 @@ const Container = styled.View`
   height: 280px;
   border-radius: 14px;
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
-  margin-left: 20px;
-  margin-top: 20px;
+  margin: 20px 10px;
 `;
 
 const Cover = styled.View`

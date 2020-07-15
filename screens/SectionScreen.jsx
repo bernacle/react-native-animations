@@ -1,8 +1,10 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import styled from "styled-components";
-import { useNavigation, useRoute, useE } from "@react-navigation/native";
-import { TouchableOpacity, StatusBar } from "react-native";
+import { useNavigation, useRoute } from "@react-navigation/native";
+import { TouchableOpacity, StatusBar, Linking, ScrollView } from "react-native";
 import * as Icon from "@expo/vector-icons";
+import WebView from "react-native-webview";
+import Markdown from "react-native-showdown";
 
 const SectionScreen = () => {
   useEffect(() => {
@@ -10,6 +12,7 @@ const SectionScreen = () => {
   }, []);
 
   const navigation = useNavigation();
+  const webViewRef = useRef(null);
   const route = useRoute();
   const { section } = route.params;
 
@@ -30,6 +33,7 @@ const SectionScreen = () => {
         <Title>{section.title}</Title>
         <Caption>{section.caption}</Caption>
       </Cover>
+
       <TouchableOpacity
         onPress={closeModal}
         style={{
@@ -47,6 +51,28 @@ const SectionScreen = () => {
           />
         </CloseView>
       </TouchableOpacity>
+      <ScrollView>
+        <Content>
+          {/* <WebView
+          source={{ html: section.content + htmlStyles }}
+          scalesPageToFit={false}
+          scrollEnabled={false}
+          ref={webViewRef}
+          onNavigationStateChange={event => {
+            if (event.url != "about:blank") {
+              webViewRef.current.stopLoading();
+              Linking.openURL(event.url);
+            }
+          }}
+        /> */}
+          <Markdown
+            body={section.content}
+            pureCSS={htmlStyles}
+            scalesPageToFit={false}
+            scrollEnabled={false}
+          />
+        </Content>
+      </ScrollView>
     </Container>
   );
 };
@@ -65,6 +91,7 @@ const CloseView = styled.View`
 
 const Container = styled.View`
   flex: 1;
+  background: white;
 `;
 
 const Cover = styled.View`
@@ -117,4 +144,44 @@ const Subtitle = styled.Text`
   color: rgba(255, 255, 255, 0.8);
   margin-left: 5px;
   text-transform: uppercase;
+`;
+
+const Content = styled.View`
+  height: 1000;
+  padding: 12px;
+`;
+
+const htmlContent = `
+<h2>This is a title</h2>
+<p>This <strong>is</strong> a <a href="http://designcode.io">link</a></p>
+<img src="https://cl.ly/8861f359ed6d/download/Wave14.jpg" />
+`;
+
+const htmlStyles = `
+<style>
+* {
+  font-family: -apple-system;
+      margin: 0;
+      padding: 0;
+}
+
+img {
+  width: 100%;
+  margin-top: 20px;
+    border-radius: 10px;
+}
+pre {
+  padding: 20px;
+  background: #212C4F;
+  overflow: hidden;
+  word-wrap: break-word;
+  border-radius: 10px;
+    margin-top: 20px;
+}
+
+code {
+  color: white;
+}
+
+</style>
 `;

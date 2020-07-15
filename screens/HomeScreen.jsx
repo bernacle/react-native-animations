@@ -6,7 +6,7 @@ import {
   Animated,
   Easing,
   StatusBar,
-  Text,
+  Platform,
 } from "react-native";
 import styled from "styled-components";
 import avatarImg from "../assets/avatar.jpg";
@@ -22,6 +22,9 @@ import { useSelector, useDispatch } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
 import ApolloClient from "apollo-boost";
 import gql from "graphql-tag";
+
+import Menu from "../components/Menu";
+import { useQuery } from "@apollo/react-hooks";
 
 const CardsQuery = gql`
   {
@@ -50,13 +53,11 @@ const CardsQuery = gql`
           width
           height
         }
+        content
       }
     }
   }
 `;
-
-import Menu from "../components/Menu";
-import { useQuery } from "@apollo/react-hooks";
 
 const HomeScreen = () => {
   const [scale, setScale] = useState(new Animated.Value(1));
@@ -69,6 +70,8 @@ const HomeScreen = () => {
 
   useEffect(() => {
     StatusBar.setBarStyle("dark-content", true);
+    if (Platform.OS === "android") StatusBar.setBarStyle("light-content", true);
+
     toggleMenu();
   }, [action]);
 
@@ -169,6 +172,7 @@ const HomeScreen = () => {
                         caption={card.caption}
                         logo={{ uri: card.logo.url }}
                         subtitle={card.subtitle}
+                        content={card.content}
                       />
                     </TouchableOpacity>
                   ))}
@@ -176,18 +180,20 @@ const HomeScreen = () => {
               )}
             </ScrollView>
             <Subtitle>Popular Courses</Subtitle>
-            {courses.map((course, index) => (
-              <Course
-                key={index}
-                image={course.image}
-                title={course.title}
-                subtitle={course.subtitle}
-                logo={course.logo}
-                author={course.author}
-                avatar={course.avatar}
-                caption={course.caption}
-              />
-            ))}
+            <CoursesContainer>
+              {courses.map((course, index) => (
+                <Course
+                  key={index}
+                  image={course.image}
+                  title={course.title}
+                  subtitle={course.subtitle}
+                  logo={course.logo}
+                  author={course.author}
+                  avatar={course.avatar}
+                  caption={course.caption}
+                />
+              ))}
+            </CoursesContainer>
           </ScrollView>
         </SafeAreaView>
       </AnimatedContainer>
@@ -206,7 +212,8 @@ const Container = styled.View`
   background: #f0f3f5;
   flex: 1;
   justify-content: center;
-  border-radius: 10px;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
 `;
 
 const AnimatedContainer = Animated.createAnimatedComponent(Container);
@@ -246,4 +253,10 @@ const Message = styled.Text`
 
 const CardsContainer = styled.View`
   flex-direction: row;
+  padding-left: 10px;
+`;
+const CoursesContainer = styled.View`
+  flex-direction: row;
+  flex-wrap: wrap;
+  padding-left: 10px;
 `;
