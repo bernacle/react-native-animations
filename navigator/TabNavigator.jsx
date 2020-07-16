@@ -83,9 +83,9 @@ const TabNavigator = () => {
         },
       })}
     >
+      <Tab.Screen name="Projects" component={ProjectsRoutes} />
       <Tab.Screen name="Home" component={HomeRoutes} />
       <Tab.Screen name="Courses" component={CoursesRoutes} />
-      <Tab.Screen name="Projects" component={ProjectsRoutes} />
     </Tab.Navigator>
   );
 };
