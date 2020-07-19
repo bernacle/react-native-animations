@@ -1,8 +1,9 @@
-import React, { useState, useCallback, useRef } from "react";
+import React, { useState, useCallback, useRef, useMemo } from "react";
 import { View, PanResponder, Animated } from "react-native";
 import styled from "styled-components";
 import Project from "../components/Project";
 import { projects } from "../utils/projects";
+import { useSelector } from "react-redux";
 
 function getNextIndex(ind) {
   let nextIndex = ind + 1;
@@ -14,21 +15,34 @@ function getNextIndex(ind) {
 
 const ProjectsScreen = () => {
   const pan = useRef(new Animated.ValueXY()).current;
+  const opacity = useRef(new Animated.Value(0)).current;
   const scale = useRef(new Animated.Value(0.9)).current;
   const translateY = useRef(new Animated.Value(44)).current;
   const thirdScale = useRef(new Animated.Value(0.8)).current;
   const thirdTranslateY = useRef(new Animated.Value(-50)).current;
   const [index, setIndex] = useState(0);
+  const action = useSelector(state => state.action);
 
-  const panResponder = useRef(
+  const panResponder = useMemo(() =>
     PanResponder.create({
-      onMoveShouldSetPanResponder: () => true,
+      onMoveShouldSetPanResponder: (evt, gestureState) => {
+        if (gestureState.dx === 0 && gestureState.dy === 0) {
+          return false;
+        } else {
+          if (action === "openCard") {
+            return false;
+          } else {
+            return true;
+          }
+        }
+      },
       onPanResponderGrant: () => {
         // Here we animate the second card to the first card initial state
         Animated.spring(scale, { toValue: 1 }).start();
         Animated.spring(translateY, { toValue: 0 }).start();
         Animated.spring(thirdScale, { toValue: 0.9 }).start();
         Animated.spring(thirdTranslateY, { toValue: 44 }).start();
+        Animated.timing(opacity, { toValue: 1 }).start();
       },
 
       onPanResponderMove: Animated.event([
@@ -57,10 +71,11 @@ const ProjectsScreen = () => {
           Animated.spring(translateY, { toValue: 44 }).start();
           Animated.spring(thirdScale, { toValue: 0.8 }).start();
           Animated.spring(thirdTranslateY, { toValue: -50 }).start();
+          Animated.timing(opacity, { toValue: 0 }).start();
         }
       },
     }),
-  ).current;
+  );
 
   return (
     <Container>
@@ -69,6 +84,7 @@ const ProjectsScreen = () => {
         {...panResponder.panHandlers}
       >
         <Project
+          canOpen={true}
           title={projects[index].title}
           image={projects[index].image}
           author={projects[index].author}
@@ -115,6 +131,7 @@ const ProjectsScreen = () => {
           text={projects[getNextIndex(index + 1)].text}
         />
       </Animated.View>
+      <AnimatedMask style={{ opacity: opacity }} />
     </Container>
   );
 };
@@ -129,3 +146,15 @@ const Container = styled.View`
 `;
 
 const Text = styled.Text``;
+
+const Mask = styled.View`
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.25);
+  z-index: -3;
+`;
+
+const AnimatedMask = Animated.createAnimatedComponent(Mask);

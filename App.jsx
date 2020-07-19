@@ -1,5 +1,5 @@
 import React from "react";
-import { createStore } from "redux";
+import { createStore, applyMiddleware } from "redux";
 import { Provider } from "react-redux";
 import AppNavigator from "./navigator/AppNavigator";
 import TabNavigator from "./navigator/TabNavigator";
@@ -19,6 +19,14 @@ const initialState = {
   action: "",
   name: "",
 };
+const logger = store => next => action => {
+  console.group(action.type);
+  console.info("dispatching", action);
+  let result = next(action);
+  console.log("next state", store.getState());
+  console.groupEnd(action.type);
+  return result;
+};
 
 const reducer = (state = initialState, action) => {
   switch (action.type) {
@@ -28,12 +36,19 @@ const reducer = (state = initialState, action) => {
       return { action: "closeMenu" };
     case "UPDATE_NAME":
       return { name: action.name };
+    case "OPEN_CARD":
+      return { action: "openCard" };
+    case "CLOSE_CARD":
+      return { action: "closeCard" };
     default:
       return state;
   }
 };
 
-const store = createStore(reducer);
+const createStoreWithMiddleware = applyMiddleware(logger)(createStore);
+const store = createStoreWithMiddleware(reducer);
+
+//const store = createStore(reducer);
 
 export default function App() {
   return (
