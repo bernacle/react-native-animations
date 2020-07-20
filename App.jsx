@@ -51,6 +51,8 @@ const store = createStoreWithMiddleware(reducer);
 //const store = createStore(reducer);
 
 export default function App() {
+  console.disableYellowBox = true;
+
   return (
     <ApolloProvider client={client}>
       <NavigationContainer>

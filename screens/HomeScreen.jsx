@@ -14,6 +14,7 @@ import Card from "../components/Card";
 import Avatar from "../components/Avatar";
 import Course from "../components/Course";
 import Logo from "../components/Logo";
+import ModalLogin from "../components/ModalLogin";
 import { NotificationIcon } from "../components/Icons";
 import { logos } from "../utils/logos";
 import { cards } from "../utils/cards";
@@ -197,6 +198,7 @@ const HomeScreen = () => {
           </ScrollView>
         </SafeAreaView>
       </AnimatedContainer>
+      {/* <ModalLogin /> */}
     </RootView>
   );
 };
